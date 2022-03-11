@@ -1,0 +1,10 @@
+﻿{
+	"name": "BlokeMod",
+	"version_number": "1.0.0",
+	"website_url": "https://github.com/ToxicFrazzles/RoR2-BlokeMod",
+	"description": "Miscellaneous RoR2 mod",
+	"dependencies": [
+		"bbepis-BepInExPack-5.4.1902",
+		"RiskofThunder-HookGenPatcher-1.2.3"
+	]
+}
