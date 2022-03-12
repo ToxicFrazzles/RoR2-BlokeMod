@@ -3,6 +3,7 @@ using RoR2;
 using RoR2.Stats;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace ExamplePlugin
 {
@@ -27,7 +28,10 @@ namespace ExamplePlugin
 
 		//The Awake() method is run at the very start when the game is initialized.
         public void Awake()
-        {
+        {   
+
+
+            // Make all lunar coin purchases affordable
             On.RoR2.PurchaseInteraction.CanBeAffordedByInteractor += (orig, self, activator) =>
             {
                 return self.costType == CostTypeIndex.LunarCoin || orig(self, activator);
@@ -35,6 +39,7 @@ namespace ExamplePlugin
 
             On.RoR2.PurchaseInteraction.OnInteractionBegin += (orig, self, activator) =>
             {
+                // Don't take lunar coins for purchases
                 if(self.costType == CostTypeIndex.LunarCoin)
                 {
                     self.onPurchase.Invoke(activator);
@@ -46,17 +51,31 @@ namespace ExamplePlugin
                 }
             };
 
+            // Delete barrels after they have been opened
             On.RoR2.BarrelInteraction.OnInteractionBegin += (orig, self, activator) =>
             {
                 orig(self, activator);
                 Destroy(self.gameObject);
             };
 
+            // Delete chests after they have been opened
             On.RoR2.ChestBehavior.ItemDrop += (orig, self) =>
             {
                 orig(self);
                 Destroy(self.gameObject);
             };
+
+            // Always spawn the blue portal.
+            On.RoR2.TeleporterInteraction.Start += (orig, self) =>
+            {
+                orig(self);
+                if (NetworkServer.active)
+                {
+                    self.shouldAttemptToSpawnShopPortal = true;
+                }
+            };
+
+
         }
 
         //The Update() method is run on every frame of the game.
